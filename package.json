@@ -1,0 +1,29 @@
+{
+  "name": "terpi-bot",
+  "version": "2.2.8",
+  "description": "terpi rodnoi",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "launch": "node ./dist/index.js",
+    "js": "tsc -p ./tsconfig.json",
+    "js-wipe": "rm -f ./database/*.sqlite && tsc -p ./tsconfig.json"
+  },
+  "keywords": [],
+  "author": "daomatys",
+  "license": "WTFPL",
+  "dependencies": {
+    "@telegraf/session": "^2.0.0-beta.7",
+    "better-sqlite3": "^9.6.0",
+    "dayjs": "^1.11.20",
+    "dotenv": "^17.3.1",
+    "jsdom": "^29.0.0",
+    "kysely": "^0.27.2",
+    "telegraf": "^4.16.3",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "typescript": "^5.9.3"
+  }
+}

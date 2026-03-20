@@ -1,0 +1,42 @@
+{
+  "compilerOptions": {
+    "pretty": true,
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "moduleResolution": "nodenext",
+    "module": "nodenext",
+    "target": "es6",
+    "sourceMap": true,
+    "esModuleInterop": true,
+
+    "strict": true,
+
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+
+    "suppressExcessPropertyErrors": false,
+    "suppressImplicitAnyIndexErrors": false,
+
+    "removeComments": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    "importHelpers": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+
+    "noEmit": false,
+    "declaration": false,
+    "skipLibCheck": false,
+
+    "jsx": "react-jsx"
+  },
+  "exclude": [
+    "node_modules",
+    "./dist",
+    "**/*.d.ts"
+  ]
+}
