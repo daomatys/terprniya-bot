@@ -67,9 +67,22 @@ const bot = new Telegraf(process.env.TG_TOKEN || '');
 bot.use(session({ store }));
 
 bot.command('start', async (ctx) => {
-  await ctx.reply('ЩА Я ВАС РАЗЪИБУ даб даб даб...');
+  const { message } = ctx;
+
+  const isTableExist = dbIsTableExist().get({ name: defineTableId(message) })?.name;
   
-  createNewTable(ctx.message);
+  if (isTableExist) {
+    await ctx.react(clownReaction);
+    await ctx.reply(`${message.from.first_name.toUpperCase()}, ЗАИБАЛ ЛАХМАТИТЬ БАБУШКУ!!! ТЕРПИ!!!`);
+
+    return;
+  }
+
+  if (!isTableExist) {
+    await ctx.reply('ЩА Я ВАС РАЗЪИБУ, СОЗДАЮ СПИСОК ДАБ ДАБ ДАБ...');
+    
+    createNewTable(ctx.message);
+  }
 });
 
 bot.command('spisok', async (ctx) => {
@@ -83,7 +96,7 @@ bot.command('spisok', async (ctx) => {
 
       const labelSymbol = i < 3 ? rankedIndication[i] : `${i}:`;
 
-      return `${labelSymbol} ${item?.name} — ${item?.count} раз${setCountSuffix(item.count ?? 0)}!`;
+      return `${labelSymbol} ${item?.name.toUpperCase()} — ${item?.count} раз${setCountSuffix(item.count ?? 0)}!`;
     })
     .join('\n');
   
@@ -108,7 +121,7 @@ bot.on(message(), async (ctx) => {
     const { first_name, id } = message.from
     dbUserWrite(message).run({ name: first_name, user_id: `${id}` });
 
-    await ctx.reply(`${first_name} - НОВЫЙ УЧАСТНИК ШИЗОЛОТЕРЕИ ТЕРПЕНИЯ, ДАБ ДАБ ДАБ`);
+    await ctx.reply(`${first_name.toUpperCase()} - НОВЫЙ УЧАСТНИК ШИЗО-ЛОТЕРЕИ ТЕРПЕНИЯ, ДАБ ДАБ ДАБ`);
   }
 
   const dbTodayWinner = dbUserByWonDate(message).get({ won_date: todaywon_date });
