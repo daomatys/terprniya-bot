@@ -2,7 +2,7 @@ import 'dotenv/config';
 
 import Database from 'better-sqlite3';
 
-import { SQLite } from "@telegraf/session/sqlite";
+import { SQLite } from '@telegraf/session/sqlite';
 import { SessionStore, Telegraf, session } from 'telegraf';
 import { Message } from 'telegraf/types';
 import { message } from 'telegraf/filters';
@@ -53,11 +53,11 @@ const dbTableLength: TableHookType = (tableId) => db.prepare(
 );
 
 const dbUserByWonDate: UserHookType = (msg) => db.prepare(
-  `SELECT user_id FROM "${defineTableId(msg)}" WHERE won_date = :won_date;` 
+  `SELECT user_id FROM "${defineTableId(msg)}" WHERE won_date = :won_date;`
 );
 
 const dbIsTableExist: MiscHookType = () => db.prepare(
- `SELECT name FROM sqlite_master WHERE type='table' AND name= :name;`
+  'SELECT name FROM sqlite_master WHERE type=\'table\' AND name= :name;'
 );
 
 const store: SessionStore<{}> = SQLite({ database: db });
@@ -66,13 +66,14 @@ const bot = new Telegraf(process.env.TG_TOKEN || '');
 
 bot.use(session({ store }));
 
-bot.command('start', async (ctx) => {
+bot.command('start', async(ctx) => {
   const { message } = ctx;
 
   const isTableExist = dbIsTableExist().get({ name: defineTableId(message) })?.name;
-  
+
   if (isTableExist) {
     await ctx.react(clownReaction);
+
     await ctx.reply(`${message.from.first_name.toUpperCase()}, ЗАИБАЛ ЛАХМАТИТЬ БАБУШКУ!!! ТЕРПИ!!!`);
 
     return;
@@ -80,12 +81,12 @@ bot.command('start', async (ctx) => {
 
   if (!isTableExist) {
     await ctx.reply('ЩА Я ВАС РАЗЪИБУ, СОЗДАЮ СПИСОК ДАБ ДАБ ДАБ...');
-    
+
     createNewTable(ctx.message);
   }
 });
 
-bot.command('spisok', async (ctx) => {
+bot.command('spisok', async(ctx) => {
   const { message } = ctx;
 
   const spisokTitle = `СКОКА КТО ТЕРПЕЛ В ЧАТЕ "${defineTableId(message)}"\n\n`;
@@ -99,17 +100,18 @@ bot.command('spisok', async (ctx) => {
       return `${labelSymbol} ${item?.name.toUpperCase()} — ${item?.count} раз${setCountSuffix(item.count ?? 0)}!`;
     })
     .join('\n');
-  
+
   await ctx.reply(`<code>${spisokTitle}${spisokBody}</code>`, { parse_mode: 'HTML' });
 });
 
-bot.on(message(), async (ctx) => {
+bot.on(message(), async(ctx) => {
   const { message } = ctx;
 
   const isTableExist = dbIsTableExist().get({ name: defineTableId(message) })?.name;
 
   if (!isTableExist) {
-    await ctx.reply(`ДАЛБАЙОП СКОМАНДУЙ /start@terpilniy_bot`);
+    await ctx.reply('ДАЛБАЙОП СКОМАНДУЙ /start@terpilniy_bot');
+
     return;
   }
 
@@ -118,7 +120,8 @@ bot.on(message(), async (ctx) => {
   const isSenderClone = dbUserIsClone(message).get({ user_id: `${message.from.id}` })?.id;
 
   if (!isSenderClone) {
-    const { first_name, id } = message.from
+    const { first_name, id } = message.from;
+
     dbUserWrite(message).run({ name: first_name, user_id: `${id}` });
 
     await ctx.reply(`${first_name.toUpperCase()} - НОВЫЙ УЧАСТНИК ШИЗО-ЛОТЕРЕИ ТЕРПЕНИЯ, ДАБ ДАБ ДАБ`);
@@ -129,18 +132,16 @@ bot.on(message(), async (ctx) => {
   if (!dbTodayWinner) {
     const tableId = defineTableId(message);
     const length = dbTableLength(tableId).get({})?.id;
-
     const luckyId = defineRandomInt(length!);
 
     dbUserUpdate(message).run({ id: luckyId, won_date: todaywon_date });
-    
+
     const luckyName = dbUserById(message).get({ id: luckyId })?.name;
-    
+
     await ctx.reply(`${luckyName} - СЕДНЯ ТЕРПИТ ВЕСЬ ДЕНЬ, ТЕРПИ РОДНОЙ`);
   }
 
   if (dbTodayWinner && `${message.from.id}` === dbTodayWinner.user_id) {
-
     await ctx.react(clownReaction);
   }
 });

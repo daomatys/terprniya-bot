@@ -1,11 +1,11 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 
 export const setCountSuffix = (a: number) => (
-  ( Math.floor(a / 10) == 1 ) ||
-  ( a % 10 < 2 ) ||
-  ( a % 10 > 4 )
+  (Math.floor(a / 10) == 1) ||
+  (a % 10 < 2) ||
+  (a % 10 > 4)
     ? ''
-    : 'а' 
+    : 'а'
 );
 
 export const defineRandomInt = (max: number) => (

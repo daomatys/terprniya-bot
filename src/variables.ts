@@ -1,4 +1,4 @@
-import { ReactionTypeEmoji } from "telegraf/types";
+import { ReactionTypeEmoji } from 'telegraf/types';
 
 export const clownReaction: ReactionTypeEmoji = {
   type: 'emoji',
