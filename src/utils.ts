@@ -12,7 +12,7 @@ export const defineRandomInt = (max: number) => (
   1 + Math.floor(Math.random() * Math.floor(max))
 );
 
-export const defineCurrentwon_date = () => {
+export const defineCurrentDate = () => {
   const format = 'DD-MM-YYYY';
 
   return dayjs().format(format);

@@ -6,7 +6,7 @@ import { SQLite } from '@telegraf/session/sqlite';
 import { SessionStore, Telegraf, session } from 'telegraf';
 import { Message } from 'telegraf/types';
 import { message } from 'telegraf/filters';
-import { defineCurrentwon_date, defineRandomInt, setCountSuffix } from './utils';
+import { defineCurrentDate, defineRandomInt, setCountSuffix } from './utils';
 import { clownReaction, rankedIndication } from './variables';
 import { UserHookType, TableHookType, MiscHookType } from './types';
 
@@ -115,7 +115,7 @@ bot.on(message(), async(ctx) => {
     return;
   }
 
-  const todaywon_date = defineCurrentwon_date();
+  const todaywon_date = defineCurrentDate();
 
   const isSenderClone = dbUserIsClone(message).get({ user_id: `${message.from.id}` })?.id;
 
