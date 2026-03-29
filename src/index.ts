@@ -92,8 +92,9 @@ bot.command('spisok', async(ctx) => {
   const spisokTitle = `СКОКА КТО ТЕРПЕЛ В ЧАТЕ "${defineTableId(message)}"\n\n`;
   const spisokBody = dbUsers(message)
     .all({})
+    .sort(({ count: primaryChatterCount }, { count: secondaryChatterCount }) => primaryChatterCount - secondaryChatterCount)
     .map((item, i) => {
-      if (!item || item.count < 1) return;
+      if (item.count < 1) return;
 
       const labelSymbol = i < 3 ? rankedIndication[i] : `${i}:`;
 
