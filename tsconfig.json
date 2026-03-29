@@ -37,6 +37,7 @@
   "exclude": [
     "node_modules",
     "./dist",
-    "**/*.d.ts"
+    "**/*.d.ts",
+    "*.config.js"
   ]
 }
