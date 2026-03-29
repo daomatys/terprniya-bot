@@ -89,16 +89,21 @@ bot.command('start', async(ctx) => {
 bot.command('spisok', async(ctx) => {
   const { message } = ctx;
 
+  console.log(dbUsers(message)
+    .all({})
+    .sort(({ count: primaryChatterCount }, { count: secondaryChatterCount }) => secondaryChatterCount - primaryChatterCount)
+    .map(({ count, name }) => ({ name, count, countType: typeof count })));
+
   const spisokTitle = `СКОКА КТО ТЕРПЕЛ В ЧАТЕ "${defineTableId(message)}"\n\n`;
   const spisokBody = dbUsers(message)
     .all({})
     .sort(({ count: primaryChatterCount }, { count: secondaryChatterCount }) => secondaryChatterCount - primaryChatterCount)
-    .map((item, i) => {
-      if (item.count < 1) return;
+    .map(({ name, count }, i) => {
+      if (count < 1) return;
 
       const labelSymbol = i < 3 ? rankedIndication[i] : `${i}:`;
 
-      return `${labelSymbol} ${item?.name.toUpperCase()} — ${item?.count} раз${setCountSuffix(item.count ?? 0)}!`;
+      return `${labelSymbol} ${name.toUpperCase()} — ${count} раз${setCountSuffix(count ?? 0)}!`;
     })
     .join('\n');
 
