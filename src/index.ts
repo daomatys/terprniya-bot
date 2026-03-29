@@ -92,7 +92,7 @@ bot.command('spisok', async(ctx) => {
   const spisokTitle = `СКОКА КТО ТЕРПЕЛ В ЧАТЕ "${defineTableId(message)}"\n\n`;
   const spisokBody = dbUsers(message)
     .all({})
-    .sort(({ count: primaryChatterCount }, { count: secondaryChatterCount }) => primaryChatterCount - secondaryChatterCount)
+    .sort(({ count: primaryChatterCount }, { count: secondaryChatterCount }) => secondaryChatterCount - primaryChatterCount)
     .map((item, i) => {
       if (item.count < 1) return;
 
