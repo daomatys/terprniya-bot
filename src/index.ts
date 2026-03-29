@@ -29,7 +29,7 @@ const createNewTable = (msg: Message) => db
   .run();
 
 const dbChattersDesc: ChatterHookType = (msg) => db.prepare(
-  `SELECT name, count FROM "${defineTableId(msg)} ORDER BY count DESC;`
+  `SELECT name, count FROM "${defineTableId(msg)}" ORDER BY count DESC;`
 );
 
 const dbChatterById: ChatterHookType = (msg) => db.prepare(
