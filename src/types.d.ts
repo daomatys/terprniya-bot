@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import { Message } from 'telegraf/types';
 
-type RecruitType = {
+type ChatterType = {
   id: number;
   user_id: string;
   name: string;
@@ -14,9 +14,9 @@ type SqliteSequenceTableType = {
   seq: number;
 };
 
-type GenericDbStatementType<T> = Database.Statement<Partial<T>, T | undefined>;
+type GenericDbStatementType<T> = Database.Statement<Partial<T>, T>;
 type GenericDbHookType<A, T> = (msg: A) => GenericDbStatementType<T>;
 
-export type UserHookType = GenericDbHookType<Message, RecruitType>;
-export type TableHookType = GenericDbHookType<string, RecruitType>;
+export type UserHookType = GenericDbHookType<Message, ChatterType>;
+export type TableHookType = GenericDbHookType<string, ChatterType>;
 export type MiscHookType = () => GenericDbStatementType<SqliteSequenceTableType>;
