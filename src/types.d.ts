@@ -17,6 +17,6 @@ type SqliteSequenceTableType = {
 type GenericDbStatementType<T> = Database.Statement<Partial<T>, T>;
 type GenericDbHookType<A, T> = (msg: A) => GenericDbStatementType<T>;
 
-export type UserHookType = GenericDbHookType<Message, ChatterType>;
+export type ChatterHookType = GenericDbHookType<Message, ChatterType>;
 export type TableHookType = GenericDbHookType<string, ChatterType>;
 export type MiscHookType = () => GenericDbStatementType<SqliteSequenceTableType>;

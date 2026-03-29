@@ -8,7 +8,7 @@ import { Message } from 'telegraf/types';
 import { message } from 'telegraf/filters';
 import { defineCurrentDate, defineRandomInt, setCountSuffix } from './utils';
 import { clownReaction, rankedIndication } from './variables';
-import { UserHookType, TableHookType, MiscHookType } from './types';
+import { ChatterHookType, TableHookType, MiscHookType } from './types';
 
 const db = new Database(process.env.DBPATH, { verbose: console.log });
 
@@ -28,32 +28,32 @@ const createNewTable = (msg: Message) => db
     );`)
   .run();
 
-const dbUsers: UserHookType = (msg) => db.prepare(
-  `SELECT name, count FROM "${defineTableId(msg)}";`
+const dbChattersDesc: ChatterHookType = (msg) => db.prepare(
+  `SELECT name, count FROM "${defineTableId(msg)} ORDER BY count DESC";`
 );
 
-const dbUserById: UserHookType = (msg) => db.prepare(
+const dbChatterById: ChatterHookType = (msg) => db.prepare(
   `SELECT name, count FROM "${defineTableId(msg)}" WHERE id = :id;`
 );
 
-const dbUserWrite: UserHookType = (msg) => db.prepare(
+const dbChatterWrite: ChatterHookType = (msg) => db.prepare(
   `INSERT INTO "${defineTableId(msg)}" (user_id, name) VALUES (:user_id, :name);`
 );
 
-const dbUserUpdate: UserHookType = (msg) => db.prepare(
+const dbChatterUpdate: ChatterHookType = (msg) => db.prepare(
   `UPDATE "${defineTableId(msg)}" SET count = count + 1, won_date = :won_date WHERE id = :id;`
 );
 
-const dbUserIsClone: UserHookType = (msg) => db.prepare(
+const dbChatterIsClone: ChatterHookType = (msg) => db.prepare(
   `SELECT id FROM "${defineTableId(msg)}" WHERE user_id = :user_id;`
+);
+
+const dbChatterByWonDate: ChatterHookType = (msg) => db.prepare(
+  `SELECT user_id FROM "${defineTableId(msg)}" WHERE won_date = :won_date;`
 );
 
 const dbTableLength: TableHookType = (tableId) => db.prepare(
   `SELECT id FROM "${tableId}" ORDER BY id DESC LIMIT 1;`
-);
-
-const dbUserByWonDate: UserHookType = (msg) => db.prepare(
-  `SELECT user_id FROM "${defineTableId(msg)}" WHERE won_date = :won_date;`
 );
 
 const dbIsTableExist: MiscHookType = () => db.prepare(
@@ -89,15 +89,9 @@ bot.command('start', async(ctx) => {
 bot.command('spisok', async(ctx) => {
   const { message } = ctx;
 
-  console.log(dbUsers(message)
-    .all({})
-    .sort(({ count: primaryChatterCount }, { count: secondaryChatterCount }) => secondaryChatterCount - primaryChatterCount)
-    .map(({ count, name }) => ({ name, count, countType: typeof count })));
-
   const spisokTitle = `СКОКА КТО ТЕРПЕЛ В ЧАТЕ "${defineTableId(message)}"\n\n`;
-  const spisokBody = dbUsers(message)
+  const spisokBody = dbChattersDesc(message)
     .all({})
-    .sort(({ count: primaryChatterCount }, { count: secondaryChatterCount }) => secondaryChatterCount - primaryChatterCount)
     .map(({ name, count }, i) => {
       if (count < 1) return;
 
@@ -123,26 +117,26 @@ bot.on(message(), async(ctx) => {
 
   const todaywon_date = defineCurrentDate();
 
-  const isSenderClone = dbUserIsClone(message).get({ user_id: `${message.from.id}` })?.id;
+  const isSenderClone = dbChatterIsClone(message).get({ user_id: `${message.from.id}` })?.id;
 
   if (!isSenderClone) {
     const { first_name, id } = message.from;
 
-    dbUserWrite(message).run({ name: first_name, user_id: `${id}` });
+    dbChatterWrite(message).run({ name: first_name, user_id: `${id}` });
 
     await ctx.reply(`${first_name.toUpperCase()} - НОВЫЙ УЧАСТНИК ШИЗО-ЛОТЕРЕИ ТЕРПЕНИЯ, ДАБ ДАБ ДАБ`);
   }
 
-  const dbTodayWinner = dbUserByWonDate(message).get({ won_date: todaywon_date });
+  const dbTodayWinner = dbChatterByWonDate(message).get({ won_date: todaywon_date });
 
   if (!dbTodayWinner) {
     const tableId = defineTableId(message);
     const length = dbTableLength(tableId).get({})?.id;
     const luckyId = defineRandomInt(length!);
 
-    dbUserUpdate(message).run({ id: luckyId, won_date: todaywon_date });
+    dbChatterUpdate(message).run({ id: luckyId, won_date: todaywon_date });
 
-    const luckyName = dbUserById(message).get({ id: luckyId })?.name;
+    const luckyName = dbChatterById(message).get({ id: luckyId })?.name;
 
     await ctx.reply(`${luckyName} - СЕДНЯ ТЕРПИТ ВЕСЬ ДЕНЬ, ТЕРПИ РОДНОЙ`);
   }
