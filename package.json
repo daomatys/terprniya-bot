@@ -1,5 +1,5 @@
 {
-  "name": "terpi-bot",
+  "name": "terpilniy-bot",
   "version": "2.2.8",
   "description": "terpi rodnoi",
   "main": "index.js",
@@ -8,7 +8,8 @@
     "js": "tsc -p ./tsconfig.json",
     "wipe": "rm -f ./database/*.sqlite",
     "js-wipe": "npm run wipe && npm run js",
-    "launch": "npm i && npm run js && node ./dist/index.js",
+    "launch": "npm run js && node ./dist/index.js",
+    "installaunch": "npm i && npm launch",
     "lint": "eslint --fix"
   },
   "keywords": [],
